@@ -6,7 +6,8 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 
 import { testConnection } from "./database/conexion.js";
-import  userRoutes from "./user/user.route.js";
+import authRoutes from "./auth/auth.route.js";
+import userRoutes from "./user/user.route.js";
 
 const app = express();
 
@@ -27,7 +28,8 @@ app.use(express.static('public'))
 // app.use(express.static(path.join(__dirname, "")));
 
 // RUTAS
-app.use("/api/users", userRoutes);
+app.use("/api/usuario", userRoutes);
+app.use("/api/auth", authRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ ok: false, result: "Ruta no encontrada" });

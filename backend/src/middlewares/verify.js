@@ -11,14 +11,12 @@ export const verifyToken = (req, res, next) => {
         if (!token) {
             throw { code: "403" };
         }
-        jwt.verify(token, process.env.JWT_SECRET);
-        const payload = jwt.decode(token);
+   
+        const payload =  jwt.verify(token, process.env.JWT_SECRET);
 
-        req.email = payload.email;
-  
+        req.user = payload;
         next();
     } catch (error) {
-        console.log(error)
         if (error instanceof jwt.TokenExpiredError) {
             const { status, message } = handleErrors("407");
             return res.status(status).json({ ok: false, result: message });
@@ -42,7 +40,7 @@ export const verifyUser = async (req, res, next) => {
         } = await userModel.findUserByEmail({ email });
 
         if (!rowCount) {
-            throw { code: "405" };
+            throw { code: "402" };
         }
 
         if (userDB.cambiar_pass) {
