@@ -1,11 +1,12 @@
 import path from "path";
-import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import { testConnection } from "./database/conexion.js";
+import { fileURLToPath } from "url";
 
+import { testConnection } from "./database/conexion.js";
+import  userRoutes from "./user/user.route.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(express.static('public'))
 // app.use(express.static(path.join(__dirname, "")));
 
 // RUTAS
+app.use("/api/users", userRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ ok: false, result: "Ruta no encontrada" });
