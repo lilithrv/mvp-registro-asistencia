@@ -11,8 +11,8 @@ export const verifyToken = (req, res, next) => {
         if (!token) {
             throw { code: "403" };
         }
-   
-        const payload =  jwt.verify(token, process.env.JWT_SECRET);
+
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
 
         req.user = payload;
         next();
@@ -44,7 +44,7 @@ export const verifyUser = async (req, res, next) => {
         }
 
         if (userDB.cambiar_pass) {
-            const isValidTempPassword = await comparePassword(password,userDB.password_hash);
+            const isValidTempPassword = await comparePassword(password, userDB.password_hash);
 
             if (!isValidTempPassword) {
                 throw { code: "402" };
@@ -66,6 +66,27 @@ export const verifyUser = async (req, res, next) => {
             console.log("Usuario correctamente autenticado: ", userDB.email);
             return next();
         }
+    } catch (error) {
+        const { status, message } = handleErrors(error.code);
+        console.log(error, message);
+        return res.status(status).json({ ok: false, result: message });
+    }
+};
+
+export const requirePasswordChanged = async (req, res, next) => {
+    try {
+        if (!req.user?.id)
+            throw { code: "403" };
+
+        const { rows: [user], rowCount } = await userModel.findAuthById({ id: req.user.id });
+        if (!rowCount)
+            throw { code: "405" };
+
+        if (user.cambiar_pass) {
+            throw { code: "408" };
+        }
+
+        next();
     } catch (error) {
         const { status, message } = handleErrors(error.code);
         console.log(error, message);

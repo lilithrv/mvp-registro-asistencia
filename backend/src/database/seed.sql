@@ -4,9 +4,10 @@ INSERT INTO roles (nombre, descripcion) VALUES
 
 INSERT INTO permisos(codigo, descripcion) VALUES
   ('create_users',  'Crear usuarios'),
-  ('modify_users',  'Modificar y listar usuarios'),
+  ('read_users', 'Leer usuarios'),
+  ('update_users',  'Modificar y listar usuarios'),
   ('delete_users',  'Eliminar (desactivar) usuarios'),
-  ('view_reports',  'Ver reportes de atrasos, salidas anticipadas e inasistencias'),
+  ('read_reports',  'Ver reportes de atrasos, salidas anticipadas e inasistencias'),
   ('list_employees','Listar empleados vía API');
 
 -- rol admin

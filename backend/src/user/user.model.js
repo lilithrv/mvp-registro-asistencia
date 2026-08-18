@@ -10,21 +10,20 @@ const findUserByEmail = async ({ email }) => {
     }
 };
 
-const findAuthById = async (id) => {
+const findAuthById = async ({ id }) => {
     try {
-        const text = "SELECT * FROM usuarios WHERE UPPER(email) = UPPER(?)";
-        const [rows] = await pool.execute(text, [id])
-        return rows[0]
+        const text = "SELECT id, email, password_hash, estado, cambiar_pass FROM usuarios WHERE id = ? LIMIT 1";
+        const [rows] = await pool.execute(text, [id]);
+        return { rows, rowCount: rows.length };
     } catch (error) {
         throw error;
     }
-
 };
 
 const create = async ({ nombre, apellido, email, password_hash, id_rol }) => {
     try {
         const text = "INSERT INTO usuarios (nombre, apellido, email, password_hash, id_rol ) VALUES (?, ?, ?, ?, ?)"
-        const [result] = await pool.execute(text, [nombre, apellido, email, password_hash, id_rol ])
+        const [result] = await pool.execute(text, [nombre, apellido, email, password_hash, id_rol])
         return {
             id: result.insertId,
             nombre,
@@ -36,8 +35,58 @@ const create = async ({ nombre, apellido, email, password_hash, id_rol }) => {
     }
 };
 
+const update = async ({ id, nombre, apellido, email, id_rol }) => {
+    try {
+        const text = "UPDATE usuarios SET nombre = ?, apellido = ?, email = ?, id_rol = ? WHERE id = ?"
+        const [result] = await pool.execute(text, [nombre, apellido, email, id_rol, id])
+        return { id, nombre, apellido, email, id_rol };
+    } catch (error) {
+        throw error
+    }
+}
+
+const list = async () => {
+    try {
+        const text = `
+        SELECT u.id, u.nombre, u.apellido, u.email, u.id_rol, r.nombre as nombre_rol, u.estado, u.cambiar_pass,
+        u.created_at, u.updated_at
+        FROM usuarios u
+        JOIN roles r ON r.id = u.id_rol
+        ORDER BY u.created_at DESC
+        `
+        const [result] = await pool.execute(text)
+        return result
+    } catch (error) {
+        throw error
+    }
+}
+
+const softDelete = async ({ id }) => {
+    try {
+        const text = "UPDATE usuarios SET estado = 'inactivo' WHERE id = ?";
+        const [result] = await pool.execute(text, [id]);
+        return { id, estado: "inactivo" };
+    } catch (error) {
+        throw error;
+    }
+};
+
+const hardDelete = async ({ id }) => {
+    try {
+        const text = "DELETE FROM usuarios WHERE id = ?";
+        const [result] = await pool.execute(text, [id]);
+        return { id, deleted: true };
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const userModel = {
     findUserByEmail,
     findAuthById,
-    create
+    create,
+    update,
+    list,
+    softDelete,
+    hardDelete
 }
