@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Env files 
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# Frontend (React + Vite)
+frontend/dist/
+frontend/.vite/
+frontend/*.local
+
+# Backend (Express)
+backend/dist/
+backend/build/
+backend/logs/
+backend/*.log
+
+#Logs generales
+*.log
+npm-debug.log*
+
+# Editor 
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Build/cache varios 
+.cache/
+.parcel-cache/
