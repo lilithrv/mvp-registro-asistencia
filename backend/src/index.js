@@ -28,7 +28,7 @@ app.use(express.static('public'))
 // app.use(express.static(path.join(__dirname, "")));
 
 // RUTAS
-app.use("/api/usuario", userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use((req, res) => {
