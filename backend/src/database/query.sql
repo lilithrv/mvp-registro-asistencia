@@ -1,5 +1,7 @@
 CREATE DATABASE IF NOT EXISTS asistencia;
 
+USE asistencia;
+
 DROP TABLE IF EXISTS asistencia;
 DROP TABLE IF EXISTS permisos_roles;
 DROP TABLE IF EXISTS usuarios;
