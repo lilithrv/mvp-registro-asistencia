@@ -55,3 +55,11 @@ Mejorar la organización interna y asegurar el cumplimiento de las normativas la
 | GET  | `/api/attendance//my-summary` | autenticado | Resumen propio mensual |
 
 
+### Reportes
+| Método | Ruta | Acceso | Requerimiento |
+|---|---|---|---|
+| GET | `/api/report/late-arrivals` | autenticado | RE-01 |
+| GET | `/api/report/early-departures` | autenticado| RE-02|
+| GET| `/api/report/absences` | autenticado| RE-03 |
+
+
