@@ -106,6 +106,16 @@ export const handleErrors = (code) => {
         status: 409,
         message: "Salida ya registrada",
       };
+    case "412":
+      return {
+        status: 400,
+        message: "Fechas inválidas o rango incorrecto",
+      };
+    case "413":
+      return {
+        status: 401,
+        message: "Usuario inválido",
+      };
     default:
       return {
         status: 500,

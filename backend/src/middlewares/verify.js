@@ -43,6 +43,10 @@ export const verifyUser = async (req, res, next) => {
             throw { code: "402" };
         }
 
+        if(userDB.estado === 'inactivo'){
+            throw {code:"413"} 
+        }
+
         if (userDB.cambiar_pass) {
             const isValidTempPassword = await comparePassword(password, userDB.password_hash);
 
