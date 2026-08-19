@@ -45,3 +45,13 @@ Mejorar la organización interna y asegurar el cumplimiento de las normativas la
 | PUT| `/api/users/:id` | autenticado| GU-02|
 | DELETE  | `/api/users/:id` | autenticado | GU-03 |
 
+
+### Asistencia
+| Método | Ruta | Acceso | Requerimiento |
+|---|---|---|---|
+| POST | `/api/attendance/check-in` | autenticado | CA-01 |
+| POST | `/api/attendance/check-out` | autenticado| CA-01|
+| GET| `/api/attendance/today` | autenticado| Evitar duplicados|
+| GET  | `/api/attendance//my-summary` | autenticado | Resumen propio mensual |
+
+

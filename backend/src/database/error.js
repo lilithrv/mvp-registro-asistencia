@@ -78,7 +78,7 @@ export const handleErrors = (code) => {
     case "406":
       return {
         status: 400,
-        message: "Debe registrar su entrada antes de la salid",
+        message: "Debe registrar su entrada antes de la salida",
       };
     case "407": 
       return {
