@@ -109,3 +109,10 @@ El backend debería quedar corriendo en el puerto configurado (revisa la consola
 | GET | `/api/report/early-departures` | autenticado| RE-02|
 | GET| `/api/report/absences` | autenticado| RE-03 |
 
+
+### Feriados
+| Método | Ruta | Acceso | Requerimiento |
+|---|---|---|---|
+| GET | `/api/holiday` | autenticado | Regla: feriados no se registra marcaje |
+| POST | `/api/holiday` | autenticado| |
+| DELETE| `/api/holiday/:id` | autenticado|  |
