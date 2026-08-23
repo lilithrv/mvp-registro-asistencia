@@ -3,6 +3,7 @@ CREATE DATABASE IF NOT EXISTS asistencia;
 USE asistencia;
 
 DROP TABLE IF EXISTS asistencia;
+DROP TABLE IF EXISTS feriados;
 DROP TABLE IF EXISTS permisos_roles;
 DROP TABLE IF EXISTS usuarios;
 DROP TABLE IF EXISTS permisos;
@@ -58,3 +59,10 @@ CREATE TABLE asistencia(
 );
 
 CREATE INDEX idx_marcaje_usuario ON asistencia(id_usuario, fecha_registro);
+
+CREATE TABLE feriados (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  fecha DATE NOT NULL UNIQUE,
+  descripcion VARCHAR(150) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

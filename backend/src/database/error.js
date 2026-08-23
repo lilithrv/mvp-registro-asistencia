@@ -80,7 +80,7 @@ export const handleErrors = (code) => {
         status: 400,
         message: "Debe registrar su entrada antes de la salida",
       };
-    case "407": 
+    case "407":
       return {
         status: 400,
         message: "La contraseña no cumple los requisitos mínimos",
@@ -115,6 +115,16 @@ export const handleErrors = (code) => {
       return {
         status: 401,
         message: "Usuario inválido",
+      };
+    case "414":
+      return {
+        status: 404,
+        message: "Feriado no encontrado",
+      };
+    case "415":
+      return {
+        status: 400,
+        message: "Día no laboral",
       };
     default:
       return {

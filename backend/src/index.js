@@ -10,6 +10,7 @@ import authRoutes from "./auth/auth.route.js";
 import userRoutes from "./user/user.route.js";
 import attendanceRoutes from "./attendance/attendance.route.js";
 import reportRoutes from "./report/report.router.js";
+import holidayRouter from "./holiday/holiday.route.js";
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/report", reportRoutes);
+app.use("/api/holiday", holidayRouter);
 
 app.use((req, res) => {
     res.status(404).json({ ok: false, result: "Ruta no encontrada" });

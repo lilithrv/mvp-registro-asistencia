@@ -44,7 +44,7 @@ const earlyDepartures = async (from, to, earlyTime) => {
 const absences = async (from, to) => {
     try {
         const text = `
-         WITH RECURSIVE cal AS (
+        WITH RECURSIVE cal AS (
         SELECT CAST(? AS DATE) AS dia
         UNION ALL
         SELECT dia + INTERVAL 1 DAY FROM cal WHERE dia < ?
@@ -56,6 +56,9 @@ const absences = async (from, to) => {
         WHERE u.estado = 'activo'
           AND r.nombre <> 'admin'
           AND DAYOFWEEK(c.dia) NOT IN (1, 7)
+          AND NOT EXISTS (
+            SELECT 1 FROM feriados f WHERE f.fecha = c.dia
+          )
           AND NOT EXISTS (
                   SELECT 1 FROM asistencia a
                   WHERE a.id_usuario = u.id
