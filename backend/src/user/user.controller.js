@@ -96,6 +96,10 @@ const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
+    if (Number(id) === Number(req.user?.id)) {
+      throw { code: "416" };
+    }
+
     const { rows: [user], rowCount } = await userModel.findAuthById({ id });
     if (!rowCount)
       throw { code: "405" };

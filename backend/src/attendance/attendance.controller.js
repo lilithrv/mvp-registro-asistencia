@@ -63,7 +63,7 @@ const mySummary = async (req, res) => {
         const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
         const data = await attendanceModel.monthSummary(req.user.id, month, LATE_TIME, EARLY_TIME);
-        return res.status(200).json({ ok: true, result: { month, ...data } });
+        return res.status(200).json({ ok: true, result: { month, rows: data } });
     } catch (error) {
         const { status, message } = handleErrors(error.code);
         return res.status(status).json({ ok: false, result: message });

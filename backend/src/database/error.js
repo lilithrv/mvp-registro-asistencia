@@ -126,6 +126,11 @@ export const handleErrors = (code) => {
         status: 400,
         message: "Día no laboral",
       };
+    case "416":
+      return {
+        status: 409,
+        message: "No puedes eliminar ni desactivar tu propia cuenta",
+      };
     default:
       return {
         status: 500,

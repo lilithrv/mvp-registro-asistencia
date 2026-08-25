@@ -21,7 +21,12 @@ const getLogin = async (req, res) => {
             sameSite: "Lax", //None solo para https, sino Lax
         });
  
-        res.status(200).json({ id: user.rows[0].id, email: user.rows[0].email, login: user.rows[0].cambiar_pass});
+        res.status(200).json({
+            id: user.rows[0].id,
+            email: user.rows[0].email,
+            id_rol: user.rows[0].id_rol,
+            login: user.rows[0].cambiar_pass
+        });
 
     } catch (error) {
         const { status, message } = handleErrors(error.code);
