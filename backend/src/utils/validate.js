@@ -6,7 +6,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const isValidEmail = (v) => isNonEmptyString(v) && EMAIL_RE.test(v.trim());
 
 // Política mínima de contraseña: al menos 8 caracteres.
-export const isValidPassword = (v) => isNonEmptyString(v) ;
+export const isValidPassword = (v) =>
+    isNonEmptyString(v) && v.length >= 8;
 
 // Estados válidos para el filtro de API
 export const VALID_STATUSES = ["activo", "inactivo", "todos"];
