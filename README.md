@@ -116,3 +116,103 @@ El backend debería quedar corriendo en el puerto configurado (revisa la consola
 | GET | `/api/holiday` | autenticado | Regla: feriados no se registra marcaje |
 | POST | `/api/holiday` | autenticado| |
 | DELETE| `/api/holiday/:id` | autenticado|  |
+
+
+## Ejemplos de solicitudes con JSON
+
+### Login
+
+**Endpoint:**
+`POST /api/auth/login`
+
+**Body:**
+
+```json
+{
+    "email":"admin@asistencia.cl",
+    "password":"Admin1234"
+}
+```
+
+### Cambiar contraseña
+
+**Endpoint:**
+`POST /api/auth/change-password`
+
+**Body:**
+
+```json
+{
+    "current_password":"Admin1234",
+    "new_password":"nuevacontrasenia123"
+}
+```
+
+### Crear usuario
+
+**Endpoint:**
+`POST /api/users`
+
+**Body:**
+
+```json
+{
+    "nombre":"Ana",
+    "apellido":"Soto",
+    "email":"ana@ej.com",
+    "id_rol":2
+}
+```
+
+### Actualizar usuario
+
+**Endpoint:**
+`PUT /api/users/:id`
+
+**Body:**
+
+```json
+{
+    "nombre":"Ana",
+    "apellido":"Soto",
+    "email":"ana@mail.com",
+    "id_rol":2
+}
+```
+
+
+### Atrasos
+#### Por defecto, atrasos del día:
+
+**Endpoint:**
+`POST /api/report/late-arrivals/`
+
+#### Para un día o rango específico:
+
+**Endpoint:**
+
+`POST /api/report/late-arrivals?from=2026-08-15&to=2026-08-19`
+
+### Salidas anticipadas
+#### Por defecto, salidas anticipadas del día:
+
+**Endpoint:**
+`POST /api/report/early-departures`
+
+#### Para un día o rango específico:
+
+**Endpoint:**
+`POST /api/report/early-departures?from=2026-08-15&to=2026-08-19`
+
+
+### Inasistencias
+
+#### Por defecto, ausencias del mes en curso:
+
+**Endpoint:**
+`POST /api/report/absences`
+
+#### Para un día específico:
+
+**Endpoint:**
+`POST /api/report/absences?from=2026-08-25&to=2026-08-25`
