@@ -16,7 +16,8 @@ Mejorar la organización interna y asegurar el cumplimiento de las normativas la
 - express-rate-limit para protección contra fuerza bruta
 
 **Frontend**
-
+- React + Vite
+- Bootstrap 5 + Bootstrap Icons
 
 
 ## Requisitos previos
@@ -71,6 +72,14 @@ Mejorar la organización interna y asegurar el cumplimiento de las normativas la
    ```
 
 El backend debería quedar corriendo en el puerto configurado (revisa la consola para confirmar la URL).
+
+## Frontend
+
+1. Entra a `frontend` e instala las dependencias con `npm install`.
+2. Copia `.env.example` como `.env` y ajusta `VITE_API_URL` si el backend no corre en el puerto 3000.
+3. Ejecuta `npm run dev` y abre la dirección que muestra Vite.
+
+El backend debe definir `FRONTEND_ORIGIN=http://localhost:5173` para aceptar las cookies de sesión durante el desarrollo.
 
 ## Endpoints
 
