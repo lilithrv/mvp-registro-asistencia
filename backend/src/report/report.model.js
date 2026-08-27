@@ -1,5 +1,6 @@
 import { pool } from "../database/conexion.js";
 
+// usuarios nuevos, no se incluyen en entrada atrasada en su día de creación
 const lateArrivals = async (from, to, lateTime) => {
     try {
         const text = `
@@ -11,6 +12,7 @@ const lateArrivals = async (from, to, lateTime) => {
       WHERE a.tipo_registro = 'entrada'
         AND a.dia_registro BETWEEN ? AND ?
         AND TIME(a.fecha_registro) > ?
+        AND a.dia_registro > DATE(u.created_at)
       ORDER BY u.id, a.dia_registro
     `
         const [rows] = await pool.execute(text, [from, to, lateTime]);
@@ -32,6 +34,7 @@ const earlyDepartures = async (from, to, earlyTime) => {
         AND a.dia_registro BETWEEN ? AND ?
         AND TIME(a.fecha_registro) < ?
         AND u.estado = 'activo'
+        AND a.dia_registro >= DATE(u.created_at)
       ORDER BY u.id, a.dia_registro
     `
         const [rows] = await pool.execute(text, [from, to, earlyTime]);
@@ -41,6 +44,7 @@ const earlyDepartures = async (from, to, earlyTime) => {
     }
 };
 
+// usuario nuevo, no sale como ausente los días antes de su creación
 const absences = async (from, to) => {
     try {
         const text = `
@@ -56,6 +60,7 @@ const absences = async (from, to) => {
         WHERE u.estado = 'activo'
           AND r.nombre <> 'admin'
           AND DAYOFWEEK(c.dia) NOT IN (1, 7)
+          AND c.dia >= DATE(u.created_at)
           AND NOT EXISTS (
             SELECT 1 FROM feriados f WHERE f.fecha = c.dia
           )
