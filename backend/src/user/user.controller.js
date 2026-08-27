@@ -1,16 +1,18 @@
-import jwt from "jsonwebtoken";
 import randomstring from "randomstring";
 import { userModel } from "./user.model.js";
 import { handleErrors } from "../database/error.js";
-import { isNonEmptyString, isValidPassword, isValidEmail } from "../utils/validate.js";
-import { hashPassword, comparePassword } from "../utils/hash.js";
+import { isNonEmptyString, isValidName, isValidEmail } from "../utils/validate.js";
+import { hashPassword } from "../utils/hash.js";
 
 const addUser = async (req, res) => {
   const { nombre, apellido, email, password, id_rol } = req.body;
 
   try {
-    if (!isNonEmptyString(nombre) || !isNonEmptyString(apellido) ||
-      !isValidEmail(email) || !id_rol) {
+    if (!isValidName(nombre) || !isValidName(apellido)) {
+      throw { code: "417" };
+    }
+
+    if (!isValidEmail(email) || !id_rol) {
       throw { code: "401" };
     }
 
@@ -50,8 +52,11 @@ const updateUser = async (req, res) => {
   const { nombre, apellido, email, id_rol } = req.body;
 
   try {
-    if (!isNonEmptyString(nombre) || !isNonEmptyString(apellido) ||
-      !isValidEmail(email) || !id_rol) {
+    if (!isValidName(nombre) || !isValidName(apellido)) {
+      throw { code: "417" };
+    }
+
+    if (!isValidEmail(email) || !id_rol) {
       throw { code: "401" };
     }
 

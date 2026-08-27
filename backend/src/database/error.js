@@ -131,6 +131,11 @@ export const handleErrors = (code) => {
         status: 409,
         message: "No puedes eliminar ni desactivar tu propia cuenta",
       };
+    case "417":
+      return {
+        status: 400,
+        message: "Nombre y apellido solo pueden contener letras (mínimo 3)",
+      };
     default:
       return {
         status: 500,
