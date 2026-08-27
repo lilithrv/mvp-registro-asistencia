@@ -48,11 +48,18 @@ Mejorar la organización interna y asegurar el cumplimiento de las normativas la
 3. Crea un archivo `.env` en la raíz de `backend` (puedes copiar `.env.example` si existe) con las siguientes variables:
 
    ```env
+   PORT=3000
+   NODE_ENV=development
+   FRONTEND_ORIGIN
    DB_HOST=
    DB_PORT=3306
    DB_USER=
    DB_PASSWORD=
    DB_NAME=asistencia
+   JWT_SECRET=
+   JWT_EXPIRES_IN=2h
+   LATE_ARRIVAL_TIME=09:30:00
+   EARLY_DEPARTURE_TIME=17:30:00
    ```
 
    Ajusta `DB_USER` y `DB_PASSWORD` según tu configuración local de MySQL.
