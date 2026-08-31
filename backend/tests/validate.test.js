@@ -7,6 +7,7 @@ import {
     isNonEmptyString,
     isValidEmail,
     isValidPassword,
+    isValidName,
     isValidMonth,
     isValidDate,
 } from "../src/utils/validate.js";
@@ -122,11 +123,37 @@ describe("isValidDate", () => {
 });
 
 describe("Datos reales del administrador (seed.sql)", () => {
-    it("CP-34: el email del administrador cumple el formato válido", () => {
+    it("CP-24: el email del administrador cumple el formato válido", () => {
         expect(isValidEmail("admin@asistencia.cl")).toBe(true);
     });
 
-    it("CP-35: la contraseña del administrador cumple la política mínima", () => {
+    it("CP-25: la contraseña del administrador cumple la política mínima", () => {
         expect(isValidPassword("Admin1234")).toBe(true);
+    });
+});
+
+describe("isValidName", () => {
+    it("CP-26: devuelve true para un nombre válido", () => {
+        expect(isValidName("Juan")).toBe(true);
+    });
+
+    it("CP-27: devuelve true para un nombre compuesto con espacios", () => {
+        expect(isValidName("María José")).toBe(true);
+    });
+
+    it("CP-28: devuelve false cuando el nombre contiene asterisco", () => {
+        expect(isValidName("*")).toBe(false);
+    });
+
+    it("CP-29: devuelve false cuando el nombre contiene arroba", () => {
+        expect(isValidName("@")).toBe(false);
+    });
+
+    it("CP-30: devuelve false cuando el nombre contiene almohadilla", () => {
+        expect(isValidName("#Carlos")).toBe(false);
+    });
+
+    it("CP-31: devuelve false cuando el nombre contiene números", () => {
+        expect(isValidName("Juan123")).toBe(false);
     });
 });
