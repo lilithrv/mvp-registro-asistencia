@@ -136,6 +136,11 @@ export const handleErrors = (code) => {
         status: 400,
         message: "Nombre y apellido solo pueden contener letras (mínimo 3)",
       };
+    case "418":
+      return {
+        status: 403,
+        message: "Administrador no puede marcar asistencia",
+      };
     default:
       return {
         status: 500,

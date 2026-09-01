@@ -1,20 +1,27 @@
 import { handleErrors } from "../database/error.js";
 import { holidayModel } from "../holiday/holiday.model.js";
+import { userModel } from "../user/user.model.js";
 import { attendanceModel } from "./attendance.model.js";
 
 const LATE_TIME = process.env.LATE_ARRIVAL_TIME || "09:30:00";
 const EARLY_TIME = process.env.EARLY_DEPARTURE_TIME || "17:30:00";
 
 // feriados y fin de semana: no laboral
+// admin no marca asistencia
 
 const checkIn = async (req, res) => {
     try {
-        if (!(await holidayModel.isWorkingToday())) 
+        const user = await userModel.findAuthById({ id: req.user.id })
+        if (user.rows[0].nombre_rol === "admin") {
+            throw { code: "418" };
+        }
+
+        if (!(await holidayModel.isWorkingToday()))
             throw { code: "415" };
 
         // no se pueden ingresar 2 entradas para un mismo día
         const today = await attendanceModel.getTodayMarks(req.user.id);
-        if (today.entrada) 
+        if (today.entrada)
             throw { code: "410" };
 
         const mark = await attendanceModel.addMark(req.user.id, "entrada");
@@ -28,9 +35,14 @@ const checkIn = async (req, res) => {
 
 const checkOut = async (req, res) => {
     try {
-        if (!(await holidayModel.isWorkingToday())) 
+        const user = await userModel.findAuthById({ id: req.user.id })
+        if (user.rows[0].nombre_rol === "admin") {
+            throw { code: "418" };
+        }
+
+        if (!(await holidayModel.isWorkingToday()))
             throw { code: "415" };
-        
+
         // se requiere entrada previa y no se permite una segunda salida
         const today = await attendanceModel.getTodayMarks(req.user.id);
         if (!today.entrada)

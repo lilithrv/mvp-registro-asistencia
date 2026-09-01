@@ -12,7 +12,13 @@ const findUserByEmail = async ({ email }) => {
 
 const findAuthById = async ({ id }) => {
     try {
-        const text = "SELECT id, email, password_hash, estado, cambiar_pass FROM usuarios WHERE id = ? LIMIT 1";
+        const text = `
+        SELECT u.id, u.email, u.password_hash, u.estado, u.cambiar_pass, u.id_rol, r.nombre as nombre_rol
+        FROM usuarios u
+        JOIN roles r ON r.id = u.id_rol
+        WHERE u.id = ? 
+        LIMIT 1
+        `;
         const [rows] = await pool.execute(text, [id]);
         return { rows, rowCount: rows.length };
     } catch (error) {
