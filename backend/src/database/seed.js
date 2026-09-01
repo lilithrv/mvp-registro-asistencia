@@ -42,6 +42,11 @@ const main = async () => {
     console.log(
       "   Revisa seed.sql para las credenciales del admin (email/password ya definidos ahí)."
     );
+
+    console.log("→ Ejecutando employees.sql (asitencia 1 mes usuarios)");
+    await runSqlFile(conn, "employees.sql");
+
+    console.log("\n Base de datos actualizada.");
   } catch (err) {
     console.error("\n Error al inicializar la base de datos:", err.message);
     process.exitCode = 1;
