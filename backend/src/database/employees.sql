@@ -226,4 +226,4 @@ INSERT INTO asistencia (id_usuario, tipo_registro, fecha_registro) VALUES
 (6, 'salida', '2026-08-28 17:18:16'),
 (6, 'entrada', '2026-09-01 08:47:06'),
 (6, 'salida', '2026-09-01 18:09:27'),
-(6, 'entrada', '2026-09-02 09:05:27');
+(6, 'entrada', '2026-09-02 09:35:27');
