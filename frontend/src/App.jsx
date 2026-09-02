@@ -25,6 +25,18 @@ function ConfirmModal({ data, onAnswer }) {
 
 function Skeleton({ rows = 4 }) { return <div className="skeleton-wrap" aria-label="Cargando contenido">{Array.from({ length: rows }, (_, i) => <div className="skeleton-line" style={{ '--delay': `${i * 90}ms`, width: `${96 - (i % 3) * 12}%` }} key={i} />)}</div> }
 
+function SessionTransition() {
+  return <main className="session-transition" role="status" aria-live="polite">
+    <div className="session-orbit" aria-hidden="true"><i /><i /><i /><span /></div>
+    <div className="session-transition-copy">
+      <span className="section-kicker">CAMBIO DE SESIÓN</span>
+      <h1>Preparando<br />tu espacio.</h1>
+      <p>Actualizando navegación y permisos</p>
+      <div className="session-progress"><i /></div>
+    </div>
+  </main>
+}
+
 class PageErrorBoundary extends Component {
   constructor(props) { super(props); this.state = { hasError: false } }
   static getDerivedStateFromError() { return { hasError: true } }
@@ -47,12 +59,47 @@ function ChangePassword({ user, currentPassword, onDone }) {
 function Sidebar({ page, setPage, user, onLogout }) {
   const admin = Number(user.id_rol) === 1 || user.email?.toLowerCase() === 'admin@asistencia.cl', items = [{ id: 'inicio', icon: 'bi-grid', text: 'Inicio' }]
   if (admin) items.push({ id: 'usuarios', icon: 'bi-people', text: 'Usuarios' }, { id: 'reportes', icon: 'bi-bar-chart', text: 'Reportes' }, { id: 'feriados', icon: 'bi-calendar2-week', text: 'Feriados' })
+  items.push({ id: 'perfil', icon: 'bi-person-circle', text: 'Mi perfil' })
   return <aside className="sidebar"><div className="sidebar-brand"><div className="brand-mark light"><i className="bi bi-check2" /></div><span>Presente</span></div><nav>{items.map(item => <button key={item.id} className={page === item.id ? 'active' : ''} onClick={() => setPage(item.id)}><i className={`bi ${item.icon}`} />{item.text}</button>)}</nav><div className="sidebar-bottom"><div className="avatar">{user.email?.[0]?.toUpperCase()}</div><div className="user-copy"><b>{admin ? 'Administrador' : 'Mi cuenta'}</b><small>{user.email}</small></div><button className="logout" title="Cerrar sesión" onClick={onLogout}><i className="bi bi-box-arrow-right" /></button></div></aside>
 }
 
 function Header({ title, onMenu, theme, toggleTheme, online }) {
   const now = new Date()
   return <header className="topbar"><button className="btn d-md-none p-0 me-3" onClick={onMenu}><i className="bi bi-list fs-3" /></button><div><h1>{title}</h1><span>{new Intl.DateTimeFormat('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }).format(now)}</span></div><div className={`connection-state ${online ? 'online' : 'offline'}`}><i className="bi bi-circle-fill" />{online ? 'En línea' : 'Sin conexión'}</div><button className="topbar-icon" title={theme === 'dark' ? 'Usar tema claro' : 'Usar tema oscuro'} onClick={toggleTheme}><i className={`bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon'}`} /></button></header>
+}
+
+function AdminDashboard({ onNavigate }) {
+  const [clock, setClock] = useState(() => new Date())
+  useEffect(() => { const timer = setInterval(() => setClock(new Date()), 1000); return () => clearInterval(timer) }, [])
+  const actions = [
+    { page: 'usuarios', icon: 'bi-people', kicker: 'EQUIPO', title: 'Gestionar usuarios', text: 'Crea cuentas, actualiza perfiles y administra sus accesos.' },
+    { page: 'reportes', icon: 'bi-bar-chart', kicker: 'ANÁLISIS', title: 'Revisar reportes', text: 'Consulta atrasos, salidas anticipadas e inasistencias.' },
+    { page: 'feriados', icon: 'bi-calendar2-week', kicker: 'CALENDARIO', title: 'Administrar feriados', text: 'Mantén actualizados los días no laborables del sistema.' }
+  ]
+  return <div className="page-enter admin-home">
+    <div className="welcome admin-welcome"><div><p className="eyebrow">PANEL DE ADMINISTRACIÓN</p><h2>Todo listo para gestionar.</h2><p>Administra personas, revisa la asistencia del equipo y configura el calendario laboral.</p></div><div className="live-clock"><b>{pad(clock.getHours())}:{pad(clock.getMinutes())}<em>:{pad(clock.getSeconds())}</em></b><span>Hora local</span></div></div>
+    <div className="admin-action-grid">{actions.map(action => <button className="admin-action" key={action.page} onClick={() => onNavigate(action.page)}><span className="admin-action-icon"><i className={`bi ${action.icon}`} /></span><span className="section-kicker">{action.kicker}</span><strong>{action.title}</strong><small>{action.text}</small><span className="admin-action-link">Abrir sección <i className="bi bi-arrow-up-right" /></span></button>)}</div>
+    <div className="card main-card admin-guide"><div className="card-body p-4 p-lg-5"><div><span className="section-kicker">RUTA SUGERIDA</span><h3>Una revisión breve mantiene todo al día.</h3></div><ol><li><b>Personas</b><span>Comprueba altas, bajas y accesos pendientes.</span></li><li><b>Asistencia</b><span>Revisa excepciones y descarga los reportes necesarios.</span></li><li><b>Calendario</b><span>Confirma los próximos feriados y días no laborables.</span></li></ol></div></div>
+  </div>
+}
+
+function Profile({ user, notify }) {
+  const empty = { current_password: '', new_password: '', confirm_password: '' }
+  const [form, setForm] = useState(empty), [loading, setLoading] = useState(false), [showPasswords, setShowPasswords] = useState(false), [error, setError] = useState('')
+  const role = Number(user.id_rol) === 1 || user.email?.toLowerCase() === 'admin@asistencia.cl' ? 'Administrador' : 'Empleado'
+  const submit = async event => {
+    event.preventDefault(); setError('')
+    if (form.new_password.length < 8) return setError('La nueva contraseña debe tener al menos 8 caracteres.')
+    if (form.new_password !== form.confirm_password) return setError('Las contraseñas nuevas no coinciden.')
+    if (form.current_password === form.new_password) return setError('La nueva contraseña debe ser diferente de la actual.')
+    setLoading(true)
+    try {
+      const data = await post('/auth/change-password', { current_password: form.current_password, new_password: form.new_password })
+      setForm(empty); notify(data.result || 'Contraseña actualizada correctamente')
+    } catch (e) { setError(getError(e)) } finally { setLoading(false) }
+  }
+  const field = (label, key, placeholder) => <div><label className="form-label" htmlFor={`profile-${key}`}>{label}</label><div className="input-group mb-3"><span className="input-group-text"><i className={`bi ${key === 'current_password' ? 'bi-lock' : 'bi-key'}`} /></span><input id={`profile-${key}`} className="form-control" type={showPasswords ? 'text' : 'password'} autoComplete={key === 'current_password' ? 'current-password' : 'new-password'} placeholder={placeholder} value={form[key]} onChange={event => setForm({ ...form, [key]: event.target.value })} required /></div></div>
+  return <div className="row g-4 page-enter profile-page"><div className="col-lg-5"><div className="card main-card h-100"><div className="card-body p-4 p-lg-5"><span className="section-kicker">CUENTA</span><h2>Mi perfil</h2><div className="profile-identity"><div className="profile-avatar">{user.email?.[0]?.toUpperCase()}</div><div><strong>{role}</strong><span>{user.email}</span></div></div><dl className="profile-details"><div><dt>Correo electrónico</dt><dd>{user.email}</dd></div><div><dt>Tipo de cuenta</dt><dd>{role}</dd></div><div><dt>Identificador</dt><dd>#{user.id}</dd></div></dl><p className="profile-note"><i className="bi bi-shield-check" /> Tu contraseña se procesa de forma segura y nunca se muestra en pantalla.</p></div></div></div><div className="col-lg-7"><div className="card main-card"><div className="card-body p-4 p-lg-5"><span className="section-kicker">SEGURIDAD</span><h2>Cambiar contraseña</h2><p className="text-secondary mb-4">Confirma tu contraseña actual y crea una nueva de al menos ocho caracteres.</p>{error && <div className="alert alert-danger"><i className="bi bi-exclamation-circle me-2" />{error}</div>}<form onSubmit={submit}>{field('Contraseña actual', 'current_password', 'Ingresa tu contraseña actual')}{field('Nueva contraseña', 'new_password', 'Mínimo 8 caracteres')}{field('Confirmar nueva contraseña', 'confirm_password', 'Repite la nueva contraseña')}<label className="profile-show-password"><input type="checkbox" checked={showPasswords} onChange={event => setShowPasswords(event.target.checked)} /> Mostrar contraseñas</label><div className="profile-security-tip"><i className="bi bi-info-circle" /><span>Usa una contraseña que no ocupes en otros servicios.</span></div><button className="btn btn-primary w-100" disabled={loading}>{loading ? <><span className="spinner-border spinner-border-sm me-2" />Actualizando…</> : <>Actualizar contraseña <i className="bi bi-arrow-right ms-2" /></>}</button></form></div></div></div></div>
 }
 
 function AttendanceCalendar({ rows }) {
@@ -105,12 +152,27 @@ function Holidays({ notify, askConfirm }) {
 }
 
 export default function App() {
-  const [user, setUser] = useState(() => JSON.parse(sessionStorage.getItem('presente_user') || 'null')), [tempPassword, setTempPassword] = useState(''), [page, setPage] = useState('inicio'), [notice, setNotice] = useState(null), [menu, setMenu] = useState(false), [theme, setTheme] = useState(() => localStorage.getItem('presente_theme') || 'light'), [online, setOnline] = useState(true), [confirmation, setConfirmation] = useState(null)
+  const [user, setUser] = useState(() => JSON.parse(sessionStorage.getItem('presente_user') || 'null')), [tempPassword, setTempPassword] = useState(''), [page, setPage] = useState('inicio'), [notice, setNotice] = useState(null), [menu, setMenu] = useState(false), [theme, setTheme] = useState(() => localStorage.getItem('presente_theme') || 'light'), [online, setOnline] = useState(true), [confirmation, setConfirmation] = useState(null), [switchingSession, setSwitchingSession] = useState(false)
   const confirmResolver = useRef(null), notify = (text, type = 'success') => setNotice({ text, type, id: Date.now() }), askConfirm = data => new Promise(resolve => { confirmResolver.current = resolve; setConfirmation(data) }), answerConfirm = answer => { confirmResolver.current?.(answer); confirmResolver.current = null; setConfirmation(null) }
   useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem('presente_theme', theme) }, [theme])
-  const login = (data, password) => { setUser(data); setTempPassword(password); sessionStorage.setItem('presente_user', JSON.stringify(data)) }, logout = async () => { try { await post('/auth/logout') } finally { sessionStorage.removeItem('presente_user'); setUser(null) } }
+  const login = (data, password) => {
+    setSwitchingSession(true)
+    setPage('inicio')
+    setMenu(false)
+    setNotice(null)
+    window.setTimeout(() => {
+      setUser(data)
+      setTempPassword(password)
+      sessionStorage.setItem('presente_user', JSON.stringify(data))
+      setSwitchingSession(false)
+    }, 850)
+  }
+  const logout = async () => { try { await post('/auth/logout') } finally { sessionStorage.removeItem('presente_user'); setPage('inicio'); setMenu(false); setNotice(null); setConfirmation(null); setUser(null) } }
+  if (switchingSession) return <SessionTransition />
   if (!user) return <Login onLogin={login} />
   if (user.login) return <ChangePassword user={user} currentPassword={tempPassword} onDone={() => { const next = { ...user, login: 0 }; setUser(next); sessionStorage.setItem('presente_user', JSON.stringify(next)) }} />
-  const titles = { inicio: 'Inicio', usuarios: 'Usuarios', reportes: 'Reportes', feriados: 'Feriados' }
-  return <div className="app-shell"><div className={`mobile-backdrop ${menu ? 'show' : ''}`} onClick={() => setMenu(false)} /><div className={menu ? 'mobile-open' : ''}><Sidebar page={page} setPage={next => { setPage(next); setMenu(false) }} user={user} onLogout={logout} /></div><div className="app-main"><Header title={titles[page]} onMenu={() => setMenu(true)} theme={theme} toggleTheme={() => setTheme(value => value === 'dark' ? 'light' : 'dark')} online={online} /><main className="content"><PageErrorBoundary page={page}><div key={page}>{page === 'inicio' && <Dashboard notify={notify} setOnline={setOnline} />}{page === 'usuarios' && <Users notify={notify} currentUserId={user.id} askConfirm={askConfirm} />}{page === 'reportes' && <Reports notify={notify} />}{page === 'feriados' && <Holidays notify={notify} askConfirm={askConfirm} />}</div></PageErrorBoundary><footer className="app-footer"><DeveloperCredit /></footer></main></div><Toast notice={notice} onClose={() => setNotice(null)} /><ConfirmModal data={confirmation} onAnswer={answerConfirm} /></div>
+  const titles = { inicio: 'Inicio', usuarios: 'Usuarios', reportes: 'Reportes', feriados: 'Feriados', perfil: 'Mi perfil' }
+  const isAdmin = Number(user.id_rol) === 1 || user.email?.toLowerCase() === 'admin@asistencia.cl'
+  const activePage = !isAdmin && !['inicio', 'perfil'].includes(page) ? 'inicio' : page
+  return <div className="app-shell"><div className={`mobile-backdrop ${menu ? 'show' : ''}`} onClick={() => setMenu(false)} /><div className={menu ? 'mobile-open' : ''}><Sidebar page={activePage} setPage={next => { setPage(next); setMenu(false) }} user={user} onLogout={logout} /></div><div className="app-main"><Header title={titles[activePage]} onMenu={() => setMenu(true)} theme={theme} toggleTheme={() => setTheme(value => value === 'dark' ? 'light' : 'dark')} online={online} /><main className="content"><PageErrorBoundary page={activePage}><div key={`${user.id}-${activePage}`}>{activePage === 'inicio' && (isAdmin ? <AdminDashboard onNavigate={setPage} /> : <Dashboard notify={notify} setOnline={setOnline} />)}{activePage === 'perfil' && <Profile user={user} notify={notify} />}{isAdmin && activePage === 'usuarios' && <Users notify={notify} currentUserId={user.id} askConfirm={askConfirm} />}{isAdmin && activePage === 'reportes' && <Reports notify={notify} />}{isAdmin && activePage === 'feriados' && <Holidays notify={notify} askConfirm={askConfirm} />}</div></PageErrorBoundary><footer className="app-footer"><DeveloperCredit /></footer></main></div><Toast notice={notice} onClose={() => setNotice(null)} /><ConfirmModal data={confirmation} onAnswer={answerConfirm} /></div>
 }
