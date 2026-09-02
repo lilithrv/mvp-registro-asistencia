@@ -25,6 +25,18 @@ function ConfirmModal({ data, onAnswer }) {
 
 function Skeleton({ rows = 4 }) { return <div className="skeleton-wrap" aria-label="Cargando contenido">{Array.from({ length: rows }, (_, i) => <div className="skeleton-line" style={{ '--delay': `${i * 90}ms`, width: `${96 - (i % 3) * 12}%` }} key={i} />)}</div> }
 
+function SessionTransition() {
+  return <main className="session-transition" role="status" aria-live="polite">
+    <div className="session-orbit" aria-hidden="true"><i /><i /><i /><span /></div>
+    <div className="session-transition-copy">
+      <span className="section-kicker">CAMBIO DE SESIÓN</span>
+      <h1>Preparando<br />tu espacio.</h1>
+      <p>Actualizando navegación y permisos</p>
+      <div className="session-progress"><i /></div>
+    </div>
+  </main>
+}
+
 class PageErrorBoundary extends Component {
   constructor(props) { super(props); this.state = { hasError: false } }
   static getDerivedStateFromError() { return { hasError: true } }
@@ -105,12 +117,27 @@ function Holidays({ notify, askConfirm }) {
 }
 
 export default function App() {
-  const [user, setUser] = useState(() => JSON.parse(sessionStorage.getItem('presente_user') || 'null')), [tempPassword, setTempPassword] = useState(''), [page, setPage] = useState('inicio'), [notice, setNotice] = useState(null), [menu, setMenu] = useState(false), [theme, setTheme] = useState(() => localStorage.getItem('presente_theme') || 'light'), [online, setOnline] = useState(true), [confirmation, setConfirmation] = useState(null)
+  const [user, setUser] = useState(() => JSON.parse(sessionStorage.getItem('presente_user') || 'null')), [tempPassword, setTempPassword] = useState(''), [page, setPage] = useState('inicio'), [notice, setNotice] = useState(null), [menu, setMenu] = useState(false), [theme, setTheme] = useState(() => localStorage.getItem('presente_theme') || 'light'), [online, setOnline] = useState(true), [confirmation, setConfirmation] = useState(null), [switchingSession, setSwitchingSession] = useState(false)
   const confirmResolver = useRef(null), notify = (text, type = 'success') => setNotice({ text, type, id: Date.now() }), askConfirm = data => new Promise(resolve => { confirmResolver.current = resolve; setConfirmation(data) }), answerConfirm = answer => { confirmResolver.current?.(answer); confirmResolver.current = null; setConfirmation(null) }
   useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem('presente_theme', theme) }, [theme])
-  const login = (data, password) => { setUser(data); setTempPassword(password); sessionStorage.setItem('presente_user', JSON.stringify(data)) }, logout = async () => { try { await post('/auth/logout') } finally { sessionStorage.removeItem('presente_user'); setUser(null) } }
+  const login = (data, password) => {
+    setSwitchingSession(true)
+    setPage('inicio')
+    setMenu(false)
+    setNotice(null)
+    window.setTimeout(() => {
+      setUser(data)
+      setTempPassword(password)
+      sessionStorage.setItem('presente_user', JSON.stringify(data))
+      setSwitchingSession(false)
+    }, 850)
+  }
+  const logout = async () => { try { await post('/auth/logout') } finally { sessionStorage.removeItem('presente_user'); setPage('inicio'); setMenu(false); setNotice(null); setConfirmation(null); setUser(null) } }
+  if (switchingSession) return <SessionTransition />
   if (!user) return <Login onLogin={login} />
   if (user.login) return <ChangePassword user={user} currentPassword={tempPassword} onDone={() => { const next = { ...user, login: 0 }; setUser(next); sessionStorage.setItem('presente_user', JSON.stringify(next)) }} />
   const titles = { inicio: 'Inicio', usuarios: 'Usuarios', reportes: 'Reportes', feriados: 'Feriados' }
-  return <div className="app-shell"><div className={`mobile-backdrop ${menu ? 'show' : ''}`} onClick={() => setMenu(false)} /><div className={menu ? 'mobile-open' : ''}><Sidebar page={page} setPage={next => { setPage(next); setMenu(false) }} user={user} onLogout={logout} /></div><div className="app-main"><Header title={titles[page]} onMenu={() => setMenu(true)} theme={theme} toggleTheme={() => setTheme(value => value === 'dark' ? 'light' : 'dark')} online={online} /><main className="content"><PageErrorBoundary page={page}><div key={page}>{page === 'inicio' && <Dashboard notify={notify} setOnline={setOnline} />}{page === 'usuarios' && <Users notify={notify} currentUserId={user.id} askConfirm={askConfirm} />}{page === 'reportes' && <Reports notify={notify} />}{page === 'feriados' && <Holidays notify={notify} askConfirm={askConfirm} />}</div></PageErrorBoundary><footer className="app-footer"><DeveloperCredit /></footer></main></div><Toast notice={notice} onClose={() => setNotice(null)} /><ConfirmModal data={confirmation} onAnswer={answerConfirm} /></div>
+  const isAdmin = Number(user.id_rol) === 1 || user.email?.toLowerCase() === 'admin@asistencia.cl'
+  const activePage = !isAdmin && page !== 'inicio' ? 'inicio' : page
+  return <div className="app-shell"><div className={`mobile-backdrop ${menu ? 'show' : ''}`} onClick={() => setMenu(false)} /><div className={menu ? 'mobile-open' : ''}><Sidebar page={activePage} setPage={next => { setPage(next); setMenu(false) }} user={user} onLogout={logout} /></div><div className="app-main"><Header title={titles[activePage]} onMenu={() => setMenu(true)} theme={theme} toggleTheme={() => setTheme(value => value === 'dark' ? 'light' : 'dark')} online={online} /><main className="content"><PageErrorBoundary page={activePage}><div key={`${user.id}-${activePage}`}>{activePage === 'inicio' && <Dashboard notify={notify} setOnline={setOnline} />}{isAdmin && activePage === 'usuarios' && <Users notify={notify} currentUserId={user.id} askConfirm={askConfirm} />}{isAdmin && activePage === 'reportes' && <Reports notify={notify} />}{isAdmin && activePage === 'feriados' && <Holidays notify={notify} askConfirm={askConfirm} />}</div></PageErrorBoundary><footer className="app-footer"><DeveloperCredit /></footer></main></div><Toast notice={notice} onClose={() => setNotice(null)} /><ConfirmModal data={confirmation} onAnswer={answerConfirm} /></div>
 }
