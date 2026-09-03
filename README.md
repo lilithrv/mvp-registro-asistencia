@@ -232,3 +232,50 @@ El backend debe definir `FRONTEND_ORIGIN=http://localhost:5173` para aceptar las
 
 **Endpoint:**
 `POST /api/report/absences?from=2026-08-25&to=2026-08-25`
+
+
+### API Pública
+**Consumo externo — sin autenticación de sesión interna**
+
+| Método | Ruta | Acceso | Requerimiento |
+|---|---|---|---|
+| GET | `/api/public/empleados` | público / plataformas externas | AP-01 |
+
+### Listar empleados (API pública)
+
+#### Filtrar por estado (obligatorio: activo, inactivo o todos)
+`GET /api/public/empleados?estado=activo`
+
+`GET /api/public/empleados?estado=inactivo`
+
+`GET /api/public/empleados?estado=todos`
+
+Ejemplo de respuesta:
+
+**Endpoint:**
+`GET /api/public/empleados?estado=activo`
+
+**Respuesta:**
+
+```json
+{
+    "ok": true,
+    "result": {
+        "estado": "inactivo",
+        "total": 1,
+        "empleados": [
+            {
+                "id": 2,
+                "nombre": "Juan",
+                "apellido": "Pérez",
+                "email": "juan.perez@asistencia.cl",
+                "id_rol": 2,
+                "nombre_rol": "empleado",
+                "estado": "inactivo",
+                "created_at": "2026-07-31 08:00:00",
+                "updated_at": "2026-09-03 11:19:21"
+            }
+        ]
+    }
+}
+```
