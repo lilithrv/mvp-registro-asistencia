@@ -141,6 +141,11 @@ export const handleErrors = (code) => {
         status: 403,
         message: "Administrador no puede marcar asistencia",
       };
+    case "419":
+      return {
+        status: 400,
+        message: "Estado inválido. Solo acepta [activo, inactivo, todos]",
+      };
     default:
       return {
         status: 500,
