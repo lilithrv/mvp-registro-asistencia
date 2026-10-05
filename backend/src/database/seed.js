@@ -43,8 +43,14 @@ const main = async () => {
       "   Revisa seed.sql para las credenciales del admin (email/password ya definidos ahí)."
     );
 
-    console.log("→ Ejecutando employees.sql (asitencia 1 mes usuarios)");
-    await runSqlFile(conn, "employees.sql");
+    const employeesFile = process.env.EMPLOYEES_SEED || "employees_etapa1.sql";
+
+    if (!fs.existsSync(path.join(__dirname, employeesFile))) {
+      throw new Error(`No se encontró el archivo de asistencia: ${employeesFile}`);
+    }
+
+    console.log(`→ Ejecutando ${employeesFile} (asistencia usuarios)`);
+    await runSqlFile(conn, employeesFile);
 
     console.log("\n Base de datos actualizada.");
   } catch (err) {

@@ -50,7 +50,7 @@ Mejorar la organización interna y asegurar el cumplimiento de las normativas la
    ```env
    PORT=3000
    NODE_ENV=development
-   FRONTEND_ORIGIN
+   FRONTEND_ORIGIN=
    DB_HOST=
    DB_PORT=3306
    DB_USER=
@@ -60,6 +60,7 @@ Mejorar la organización interna y asegurar el cumplimiento de las normativas la
    JWT_EXPIRES_IN=2h
    LATE_ARRIVAL_TIME=09:30:00
    EARLY_DEPARTURE_TIME=17:30:00
+   EMPLOYEES_SEED=employees_etapa2.sql o employees_etapa1.sql
    ```
 
    Ajusta `DB_USER` y `DB_PASSWORD` según tu configuración local de MySQL.
