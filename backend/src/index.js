@@ -38,8 +38,8 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/report", reportRoutes);
 app.use("/api/holiday", holidayRouter);
 
-// apiREST
-app.use("/api/public", apiPublicRoutes);
+// api Mobile
+app.use("/api/mobile", apiPublicRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ ok: false, result: "Ruta no encontrada" });
