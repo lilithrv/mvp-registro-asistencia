@@ -11,7 +11,7 @@ import userRoutes from "./user/user.route.js";
 import attendanceRoutes from "./attendance/attendance.route.js";
 import reportRoutes from "./report/report.router.js";
 import holidayRouter from "./holiday/holiday.route.js";
-import apiPublicRoutes from "./apiPublic/apiPublic.router.js";
+import apiRestRoutes from "./apiRest/apiRest.router.js";
 
 const app = express();
 
@@ -39,7 +39,7 @@ app.use("/api/report", reportRoutes);
 app.use("/api/holiday", holidayRouter);
 
 // api Mobile
-app.use("/api/mobile", apiPublicRoutes);
+app.use("/api/apiRest", apiRestRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ ok: false, result: "Ruta no encontrada" });
