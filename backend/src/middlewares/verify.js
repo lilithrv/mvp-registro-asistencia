@@ -27,6 +27,30 @@ export const verifyToken = (req, res, next) => {
     }
 };
 
+// Verifica el JWT enviado por la app móvil en la cabecera Authorization: Bearer <token>
+export const verifyBearerToken = (req, res, next) => {
+    try {
+        const header = req.headers['authorization'] || "";
+        const [scheme, token] = header.split(" ");
+
+        if (scheme !== "Bearer" || !token) {
+            throw { code: "403" };
+        }
+
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+        req.user = payload;
+        next();
+    } catch (error) {
+        if (error instanceof jwt.TokenExpiredError) {
+            const { status, message } = handleErrors("407");
+            return res.status(status).json({ ok: false, result: message });
+        }
+        const { status, message } = handleErrors(error.code);
+        return res.status(status).json({ ok: false, result: message });
+    }
+};
+
 export const verifyUser = async (req, res, next) => {
     const { email, password } = req.body;
     try {

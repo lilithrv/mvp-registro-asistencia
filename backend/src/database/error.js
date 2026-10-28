@@ -162,6 +162,11 @@ export const handleErrors = (code) => {
         message:
           "Debe cambiar su contraseña en el sistema web antes de usar la app",
       };
+    case "423":
+      return {
+        status: 400,
+        message: "La fecha consultada aún no ha ocurrido",
+      };
     default:
       return {
         status: 500,
