@@ -38,5 +38,5 @@ WHERE r.nombre = 'admin'
 ON DUPLICATE KEY UPDATE id_rol = permisos_roles.id_rol;
 
 -- clave inicial Admin1234
-INSERT INTO usuarios (nombre, apellido, email, password_hash, id_rol, cambiar_pass) VALUES
-('admin', 'admin', 'admin@asistencia.cl', '$2b$10$HTxdx44NhesaKZ7f.Cj9hORQ5f9d18OfHJ2Bds.kigug0HD.73QXW', 1,true);
+INSERT INTO usuarios (nombre, apellido, email, rut, password_hash, id_rol, cambiar_pass) VALUES
+('admin', 'admin', 'admin@asistencia.cl', '22333444-K', '$2b$10$HTxdx44NhesaKZ7f.Cj9hORQ5f9d18OfHJ2Bds.kigug0HD.73QXW', 1, false);

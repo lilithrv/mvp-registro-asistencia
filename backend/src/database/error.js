@@ -146,6 +146,22 @@ export const handleErrors = (code) => {
         status: 400,
         message: "Estado inválido. Solo acepta [activo, inactivo, todos]",
       };
+    case "420":
+      return {
+        status: 400,
+        message: "RUT inválido o no corresponde a un formato válido",
+      };
+    case "421":
+      return {
+        status: 400,
+        message: "Debe indicar el RUT a consultar",
+      };
+    case "422":
+      return {
+        status: 403,
+        message:
+          "Debe cambiar su contraseña en el sistema web antes de usar la app",
+      };
     default:
       return {
         status: 500,

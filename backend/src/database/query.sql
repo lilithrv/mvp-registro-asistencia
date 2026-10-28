@@ -37,6 +37,7 @@ CREATE TABLE usuarios(
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
+    rut VARCHAR(12) UNIQUE NULL,
     password_hash VARCHAR(255) NOT NULL,
     id_rol INT NOT NULL,
     estado ENUM('activo', 'inactivo') NOT NULL DEFAULT 'activo',
