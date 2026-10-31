@@ -19,6 +19,18 @@ const resolveEstado = (req) => {
 
 const listByEstado = async (req, res) => {
     try {
+        // actual: persona actualmente autenticada
+        const { rows: [actual], rowCount } = await userModel.findAuthById({ id: req.user?.id });
+        if (!rowCount) {
+            throw { code: "405" };
+        }
+        if (actual.estado === "inactivo") {
+            throw { code: "413" };
+        }
+        if (actual.nombre_rol !== "admin") {
+            throw { code: "404" };
+        }
+
         const estado = resolveEstado(req);
         const result = await apiRestModel.listByEstado(estado);
         return res.status(200).json({
