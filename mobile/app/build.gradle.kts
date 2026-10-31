@@ -17,15 +17,22 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField(
-            "String",
-            "API_BASE_URL",
-            "\"https://portal-asistencia.chilecentral.cloudapp.azure.com/api/apiRest/\""
-        )
     }
 
     buildTypes {
+        debug {
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"http://10.0.2.2:3000/api/apiRest/\""
+            )
+        }
         release {
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"https://portal-asistencia.chilecentral.cloudapp.azure.com/api/apiRest/\""
+            )
             optimization {
                 enable = false
             }
