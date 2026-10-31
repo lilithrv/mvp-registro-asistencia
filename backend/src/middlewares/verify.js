@@ -51,6 +51,33 @@ export const verifyBearerToken = (req, res, next) => {
     }
 };
 
+export const requireMobileAdmin = async (req, res, next) => {
+    try {
+        if (!req.user?.id) {
+            throw { code: "403" };
+        }
+
+        const { rows: [user], rowCount } = await userModel.findAuthById({ id: req.user.id });
+        if (!rowCount) {
+            throw { code: "405" };
+        }
+        if (user.estado === "inactivo") {
+            throw { code: "413" };
+        }
+        if (user.cambiar_pass) {
+            throw { code: "422" };
+        }
+        if (user.nombre_rol !== "admin") {
+            throw { code: "404" };
+        }
+
+        next();
+    } catch (error) {
+        const { status, message } = handleErrors(error.code);
+        return res.status(status).json({ ok: false, result: message });
+    }
+};
+
 export const verifyUser = async (req, res, next) => {
     const { email, password } = req.body;
     try {

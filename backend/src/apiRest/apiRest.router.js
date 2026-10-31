@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { apiRestController } from "./apiRest.controller.js";
-import { verifyBearerToken } from "../middlewares/verify.js";
+import { requireMobileAdmin, verifyBearerToken } from "../middlewares/verify.js";
 
 const router = Router();
 
-router.get("/empleados", apiRestController.listByEstado);
+router.get("/empleados", verifyBearerToken, requireMobileAdmin, apiRestController.listByEstado);
 
 router.post("/login", apiRestController.login);
 

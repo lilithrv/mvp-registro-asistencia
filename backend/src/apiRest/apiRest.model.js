@@ -3,7 +3,7 @@ import { pool } from "../database/conexion.js";
 const listByEstado = async (estado) => {
     try {
         const text = `
-        SELECT u.id, u.nombre, u.apellido, u.email, u.id_rol, r.nombre as nombre_rol, u.estado,
+        SELECT u.id, u.nombre, u.apellido, u.email, u.rut, u.id_rol, r.nombre as nombre_rol, u.estado,
                u.created_at, u.updated_at
           FROM usuarios u
           JOIN roles r ON r.id = u.id_rol
