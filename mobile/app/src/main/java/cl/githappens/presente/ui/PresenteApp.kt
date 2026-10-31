@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import cl.githappens.presente.domain.model.UserRole
 import cl.githappens.presente.domain.model.UserSession
+import cl.githappens.presente.ui.employee.EmployeeHomeRoute
 import cl.githappens.presente.ui.login.LoginRoute
 import cl.githappens.presente.ui.theme.Acid
 import cl.githappens.presente.ui.theme.Ink
@@ -57,16 +58,22 @@ fun PresenteApp() {
         if (activeSession == null) {
             LoginRoute(onAuthenticated = { session = it })
         } else {
-            RoleHome(
-                session = activeSession,
-                onLogout = { session = null }
-            )
+            when (activeSession.role) {
+                UserRole.ADMIN -> AdminPlaceholder(
+                    session = activeSession,
+                    onLogout = { session = null }
+                )
+                UserRole.EMPLOYEE -> EmployeeHomeRoute(
+                    session = activeSession,
+                    onLogout = { session = null }
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun RoleHome(
+private fun AdminPlaceholder(
     session: UserSession,
     onLogout: () -> Unit
 ) {
@@ -110,7 +117,7 @@ private fun RoleHome(
         Spacer(Modifier.height(52.dp))
         Column(modifier = Modifier.padding(horizontal = 24.dp)) {
             Text(
-                text = if (session.role == UserRole.ADMIN) "PANEL ADMINISTRATIVO" else "MI JORNADA",
+                text = "PANEL ADMINISTRATIVO",
                 style = MaterialTheme.typography.labelSmall,
                 color = Muted
             )
@@ -128,11 +135,7 @@ private fun RoleHome(
                     .padding(20.dp)
             ) {
                 Text(
-                    text = if (session.role == UserRole.ADMIN) {
-                        "Aquí podrás consultar el estado del equipo y sus registros de asistencia."
-                    } else {
-                        "Aquí podrás consultar tus entradas y salidas por fecha."
-                    },
+                    text = "Aquí podrás consultar el estado del equipo y sus registros de asistencia.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = Ink
                 )

@@ -13,12 +13,14 @@ object ApiClient {
         .writeTimeout(20, TimeUnit.SECONDS)
         .build()
 
-    val authApi: AuthApi by lazy {
+    private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(AuthApi::class.java)
     }
+
+    val authApi: AuthApi by lazy { retrofit.create(AuthApi::class.java) }
+    val attendanceApi: AttendanceApi by lazy { retrofit.create(AttendanceApi::class.java) }
 }
