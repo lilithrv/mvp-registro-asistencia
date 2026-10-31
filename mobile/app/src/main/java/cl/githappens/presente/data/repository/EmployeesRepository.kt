@@ -27,6 +27,9 @@ class EmployeesRepository(
                 }
             )
         } catch (error: HttpException) {
+            if (error.code() == 401) {
+                return EmployeesResult.SessionExpired
+            }
             val message = error.response()?.errorBody()?.string()?.let { body ->
                 runCatching { gson.fromJson(body, ApiErrorResponse::class.java).result }.getOrNull()
             }
@@ -42,4 +45,5 @@ class EmployeesRepository(
 sealed interface EmployeesResult {
     data class Success(val employees: List<Employee>) : EmployeesResult
     data class Error(val message: String) : EmployeesResult
+    data object SessionExpired : EmployeesResult
 }

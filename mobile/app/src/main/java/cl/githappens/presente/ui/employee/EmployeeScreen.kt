@@ -22,6 +22,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -46,12 +47,16 @@ import java.util.Locale
 fun EmployeeHomeRoute(
     session: UserSession,
     onLogout: () -> Unit,
+    onSessionExpired: () -> Unit,
     viewModel: EmployeeViewModel = viewModel(
         key = "employee-${session.id}",
         factory = EmployeeViewModel.factory(session)
     )
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle().value
+    LaunchedEffect(state.sessionExpired) {
+        if (state.sessionExpired) onSessionExpired()
+    }
     EmployeeScreen(
         session = session,
         state = state,

@@ -29,7 +29,8 @@ data class AdminUiState(
     val isLoadingEmployees: Boolean = false,
     val isLoadingAttendance: Boolean = false,
     val employeesError: String? = null,
-    val attendanceError: String? = null
+    val attendanceError: String? = null,
+    val sessionExpired: Boolean = false
 )
 
 class AdminViewModel(
@@ -108,6 +109,9 @@ class AdminViewModel(
                         it.copy(isLoadingEmployees = false, employeesError = result.message)
                     }
                 }
+                EmployeesResult.SessionExpired -> {
+                    _uiState.update { it.copy(isLoadingEmployees = false, sessionExpired = true) }
+                }
             }
         }
     }
@@ -147,6 +151,9 @@ class AdminViewModel(
                             attendanceError = result.message
                         )
                     }
+                }
+                AttendanceResult.SessionExpired -> {
+                    _uiState.update { it.copy(isLoadingAttendance = false, sessionExpired = true) }
                 }
             }
         }

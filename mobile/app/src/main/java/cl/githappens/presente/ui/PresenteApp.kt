@@ -20,6 +20,7 @@ import cl.githappens.presente.ui.login.LoginRoute
 @Composable
 fun PresenteApp() {
     var session by remember { mutableStateOf<UserSession?>(null) }
+    var loginNotice by remember { mutableStateOf<String?>(null) }
 
     AnimatedContent(
         targetState = session,
@@ -32,16 +33,36 @@ fun PresenteApp() {
         label = "session"
     ) { activeSession ->
         if (activeSession == null) {
-            LoginRoute(onAuthenticated = { session = it })
+            LoginRoute(
+                notice = loginNotice,
+                onAuthenticated = {
+                    loginNotice = null
+                    session = it
+                }
+            )
         } else {
             when (activeSession.role) {
                 UserRole.ADMIN -> AdminHomeRoute(
                     session = activeSession,
-                    onLogout = { session = null }
+                    onLogout = {
+                        loginNotice = null
+                        session = null
+                    },
+                    onSessionExpired = {
+                        loginNotice = "Tu sesión terminó. Ingresa nuevamente para continuar."
+                        session = null
+                    }
                 )
                 UserRole.EMPLOYEE -> EmployeeHomeRoute(
                     session = activeSession,
-                    onLogout = { session = null }
+                    onLogout = {
+                        loginNotice = null
+                        session = null
+                    },
+                    onSessionExpired = {
+                        loginNotice = "Tu sesión terminó. Ingresa nuevamente para continuar."
+                        session = null
+                    }
                 )
             }
         }

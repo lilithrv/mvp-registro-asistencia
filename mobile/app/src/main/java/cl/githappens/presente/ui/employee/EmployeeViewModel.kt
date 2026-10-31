@@ -19,7 +19,8 @@ data class EmployeeUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val record: AttendanceRecord? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val sessionExpired: Boolean = false
 )
 
 class EmployeeViewModel(
@@ -61,6 +62,9 @@ class EmployeeViewModel(
                     _uiState.update {
                         it.copy(isLoading = false, record = null, error = result.message)
                     }
+                }
+                AttendanceResult.SessionExpired -> {
+                    _uiState.update { it.copy(isLoading = false, sessionExpired = true) }
                 }
             }
         }

@@ -50,11 +50,13 @@ import cl.githappens.presente.ui.theme.White
 @Composable
 fun LoginRoute(
     onAuthenticated: (UserSession) -> Unit,
+    notice: String? = null,
     viewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle().value
     LoginScreen(
         state = state,
+        notice = notice,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         onTogglePassword = viewModel::togglePasswordVisibility,
@@ -65,6 +67,7 @@ fun LoginRoute(
 @Composable
 fun LoginScreen(
     state: LoginUiState,
+    notice: String? = null,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePassword: () -> Unit,
@@ -128,6 +131,20 @@ fun LoginScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = Muted
             )
+
+            notice?.let { message ->
+                Spacer(Modifier.height(22.dp))
+                Text(
+                    text = message,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Acid)
+                        .border(1.dp, Ink)
+                        .padding(14.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Ink
+                )
+            }
 
             state.error?.let { message ->
                 Spacer(Modifier.height(22.dp))
