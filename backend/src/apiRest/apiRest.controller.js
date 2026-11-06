@@ -19,6 +19,24 @@ const resolveEstado = (req) => {
 
 const listByEstado = async (req, res) => {
     try {
+        const estado = resolveEstado(req);
+        const result = await apiRestModel.listByEstado(estado);
+        return res.status(200).json({
+            ok: true,
+            result: {
+                estado,
+                total: result.length,
+                empleados: result
+            }
+        });
+    } catch (error) {
+        const { status, message } = handleErrors(error.code);
+        return res.status(status).json({ ok: false, result: message });
+    }
+};
+
+const listByRut = async (req, res) => {
+    try {
         // actual: persona actualmente autenticada
         const { rows: [actual], rowCount } = await userModel.findAuthById({ id: req.user?.id });
         if (!rowCount) {
@@ -32,7 +50,7 @@ const listByEstado = async (req, res) => {
         }
 
         const estado = resolveEstado(req);
-        const result = await apiRestModel.listByEstado(estado);
+        const result = await apiRestModel.listByRut(estado);
         return res.status(200).json({
             ok: true,
             result: {
@@ -185,4 +203,5 @@ export const apiRestController = {
   listByEstado,
   login,
   asistencia,
+  listByRut
 }
