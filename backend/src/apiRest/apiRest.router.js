@@ -4,7 +4,9 @@ import { verifyBearerToken } from "../middlewares/verify.js";
 
 const router = Router();
 
-router.get("/empleados", verifyBearerToken, apiRestController.listByEstado);
+router.get("/public/empleados", apiRestController.listByEstado);
+
+router.get("/empleados", verifyBearerToken, apiRestController.listByRut);
 
 router.post("/login", apiRestController.login);
 
