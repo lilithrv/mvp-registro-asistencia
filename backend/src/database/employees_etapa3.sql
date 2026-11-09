@@ -5,11 +5,11 @@ USE asistencia;
 -- rut agregado para etapa 3 (consulta por RUT desde app móvil)
 
 INSERT INTO usuarios (id, nombre, apellido, email, rut, password_hash, id_rol, estado, cambiar_pass, created_at) VALUES
-(2, 'Juan', 'Pérez', 'juan.perez@asistencia.cl', '18234567-9', '$2b$10$1SlXUVeLP8L8aoEVXdSbrezPt1maRwD7MzpybPncogQEaxfmTyxWu', 2, 'activo', false, '2026-07-31 08:00:00'),
-(3, 'María', 'González', 'maria.gonzalez@asistencia.cl', '19345678-2', '$2b$10$1SlXUVeLP8L8aoEVXdSbrezPt1maRwD7MzpybPncogQEaxfmTyxWu', 2, 'activo', false, '2026-07-31 08:00:00'),
-(4, 'Pedro', 'Soto', 'pedro.soto@asistencia.cl', '17456789-1', '$2b$10$1SlXUVeLP8L8aoEVXdSbrezPt1maRwD7MzpybPncogQEaxfmTyxWu', 2, 'activo', false, '2026-07-31 08:00:00'),
-(5, 'Carla', 'Muñoz', 'carla.munoz@asistencia.cl', '20567891-3', '$2b$10$1SlXUVeLP8L8aoEVXdSbrezPt1maRwD7MzpybPncogQEaxfmTyxWu', 2, 'activo', false, '2026-07-31 08:00:00'),
-(6, 'Diego', 'Rojas', 'diego.rojas@asistencia.cl', '16678912-5', '$2b$10$1SlXUVeLP8L8aoEVXdSbrezPt1maRwD7MzpybPncogQEaxfmTyxWu', 2, 'activo', false, '2026-07-31 08:00:00');
+(2, 'Juan', 'Pérez', 'juan.perez@asistencia.cl', '18234567-9', '$2b$10$QFKf0mhS4Nb0t6gErkqYPenR.mDmvtRvqbPJenZslnClmhDeVZI2e', 2, 'activo', false, '2026-07-31 08:00:00'),
+(3, 'María', 'González', 'maria.gonzalez@asistencia.cl', '19345678-2', '$2b$10$QFKf0mhS4Nb0t6gErkqYPenR.mDmvtRvqbPJenZslnClmhDeVZI2e', 2, 'activo', false, '2026-07-31 08:00:00'),
+(4, 'Pedro', 'Soto', 'pedro.soto@asistencia.cl', '17456789-1', '$2b$10$QFKf0mhS4Nb0t6gErkqYPenR.mDmvtRvqbPJenZslnClmhDeVZI2e', 2, 'activo', false, '2026-07-31 08:00:00'),
+(5, 'Carla', 'Muñoz', 'carla.munoz@asistencia.cl', '20567891-3', '$2b$10$QFKf0mhS4Nb0t6gErkqYPenR.mDmvtRvqbPJenZslnClmhDeVZI2e', 2, 'activo', false, '2026-07-31 08:00:00'),
+(6, 'Diego', 'Rojas', 'diego.rojas@asistencia.cl', '16678912-5', '$2b$10$QFKf0mhS4Nb0t6gErkqYPenR.mDmvtRvqbPJenZslnClmhDeVZI2e', 2, 'activo', false, '2026-07-31 08:00:00');
 
 -- Registros de asistencia: 01-ago al 30-nov 2026 (días hábiles, entrada y salida)
 -- Feriados excluidos: 15-ago, 18-sep, 19-sep, 12-oct, 31-oct, 01-nov
