@@ -177,7 +177,8 @@ El backend debe definir `FRONTEND_ORIGIN=http://localhost:5173` para aceptar las
     "nombre":"Ana",
     "apellido":"Soto",
     "email":"ana@ej.com",
-    "id_rol":2
+    "id_rol":2,
+    "rut": "174567891"
 }
 ```
 
@@ -193,7 +194,8 @@ El backend debe definir `FRONTEND_ORIGIN=http://localhost:5173` para aceptar las
     "nombre":"Ana",
     "apellido":"Soto",
     "email":"ana@mail.com",
-    "id_rol":2
+    "id_rol":2,
+    "rut": "174567891"
 }
 ```
 
