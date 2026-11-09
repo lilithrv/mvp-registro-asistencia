@@ -1,11 +1,11 @@
 import randomstring from "randomstring";
 import { userModel } from "./user.model.js";
 import { handleErrors } from "../database/error.js";
-import { isNonEmptyString, isValidName, isValidEmail } from "../utils/validate.js";
+import { isNonEmptyString, isValidName, isValidEmail, isValidRut, normalizeRut } from "../utils/validate.js";
 import { hashPassword } from "../utils/hash.js";
 
 const addUser = async (req, res) => {
-  const { nombre, apellido, email, password, id_rol } = req.body;
+  const { nombre, apellido, email, rut, password, id_rol } = req.body;
 
   try {
     if (!isValidName(nombre) || !isValidName(apellido)) {
@@ -14,6 +14,14 @@ const addUser = async (req, res) => {
 
     if (!isValidEmail(email) || !id_rol) {
       throw { code: "401" };
+    }
+
+    if (!isNonEmptyString(rut)) {
+      throw { code: "401" };  
+    }
+
+    if (!isValidRut(rut)) {
+      throw { code: "420" };
     }
 
     const existing = await userModel.findUserByEmail(email.trim());
@@ -29,6 +37,7 @@ const addUser = async (req, res) => {
       nombre: nombre.trim(),
       apellido: apellido.trim(),
       email: email.trim(),
+      rut: normalizeRut(rut),
       password_hash,
       id_rol
     });
@@ -49,7 +58,7 @@ const addUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { nombre, apellido, email, id_rol } = req.body;
+  const { nombre, apellido, email, rut, id_rol } = req.body;
 
   try {
     if (!isValidName(nombre) || !isValidName(apellido)) {
@@ -58,6 +67,14 @@ const updateUser = async (req, res) => {
 
     if (!isValidEmail(email) || !id_rol) {
       throw { code: "401" };
+    }
+
+    if (!isNonEmptyString(rut)) {
+      throw { code: "401" };  
+    }
+    
+    if (!isValidRut(rut)) {
+      throw { code: "420" };
     }
 
     const existing = await userModel.findUserByEmail({ email: email.trim() });
@@ -71,6 +88,7 @@ const updateUser = async (req, res) => {
       nombre: nombre.trim(),
       apellido: apellido.trim(),
       email: email.trim(),
+      rut: normalizeRut(rut),
       id_rol,
     });
 
