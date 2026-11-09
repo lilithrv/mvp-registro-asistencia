@@ -26,26 +26,27 @@ const findAuthById = async ({ id }) => {
     }
 };
 
-const create = async ({ nombre, apellido, email, password_hash, id_rol }) => {
+const create = async ({ nombre, apellido, email, rut, password_hash, id_rol }) => {
     try {
-        const text = "INSERT INTO usuarios (nombre, apellido, email, password_hash, id_rol ) VALUES (?, ?, ?, ?, ?)"
-        const [result] = await pool.execute(text, [nombre, apellido, email, password_hash, id_rol])
+        const text = "INSERT INTO usuarios (nombre, apellido, email, rut, password_hash, id_rol ) VALUES (?, ?, ?, ?, ?, ?)"
+        const [result] = await pool.execute(text, [nombre, apellido, email, rut, password_hash, id_rol])
         return {
             id: result.insertId,
             nombre,
             apellido,
             email,
+            rut,
         };
     } catch (error) {
         throw error
     }
 };
 
-const update = async ({ id, nombre, apellido, email, id_rol }) => {
+const update = async ({ id, nombre, apellido, email, rut, id_rol }) => {
     try {
-        const text = "UPDATE usuarios SET nombre = ?, apellido = ?, email = ?, id_rol = ? WHERE id = ?"
-        const [result] = await pool.execute(text, [nombre, apellido, email, id_rol, id])
-        return { id, nombre, apellido, email, id_rol };
+        const text = "UPDATE usuarios SET nombre = ?, apellido = ?, email = ?, rut = ?, id_rol = ? WHERE id = ?"
+        const [result] = await pool.execute(text, [nombre, apellido, email, rut, id_rol, id])
+        return { id, nombre, apellido, email, rut, id_rol };
     } catch (error) {
         throw error
     }
@@ -54,7 +55,7 @@ const update = async ({ id, nombre, apellido, email, id_rol }) => {
 const list = async () => {
     try {
         const text = `
-        SELECT u.id, u.nombre, u.apellido, u.email, u.id_rol, r.nombre as nombre_rol, u.estado, u.cambiar_pass,
+        SELECT u.id, u.nombre, u.apellido, u.email, u.rut, u.id_rol, r.nombre as nombre_rol, u.estado, u.cambiar_pass,
         u.created_at, u.updated_at
         FROM usuarios u
         JOIN roles r ON r.id = u.id_rol
