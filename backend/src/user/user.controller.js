@@ -24,7 +24,7 @@ const addUser = async (req, res) => {
       throw { code: "420" };
     }
 
-    const existing = await userModel.findUserByEmail(email.trim());
+    const existing = await userModel.findUserByEmail({ email: email.trim() });
 
     if (existing.rowCount !== 0) throw { code: "409" };
 
