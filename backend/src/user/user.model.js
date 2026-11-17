@@ -28,7 +28,7 @@ const findAuthById = async ({ id }) => {
 
 const create = async ({ nombre, apellido, email, rut, password_hash, id_rol }) => {
     try {
-        const text = "INSERT INTO usuarios (nombre, apellido, email, rut, password_hash, id_rol ) VALUES (?, ?, ?, ?, ?, ?)"
+        const text = "INSERT INTO usuarios (nombre, apellido, email, rut, password_hash, id_rol) VALUES (?, ?, ?, ?, ?, ?)"
         const [result] = await pool.execute(text, [nombre, apellido, email, rut, password_hash, id_rol])
         return {
             id: result.insertId,

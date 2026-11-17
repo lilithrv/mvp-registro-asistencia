@@ -17,7 +17,7 @@ const addUser = async (req, res) => {
     }
 
     if (!isNonEmptyString(rut)) {
-      throw { code: "401" };  
+      throw { code: "421" };
     }
 
     if (!isValidRut(rut)) {
@@ -70,9 +70,9 @@ const updateUser = async (req, res) => {
     }
 
     if (!isNonEmptyString(rut)) {
-      throw { code: "401" };  
+      throw { code: "421" };
     }
-    
+
     if (!isValidRut(rut)) {
       throw { code: "420" };
     }
