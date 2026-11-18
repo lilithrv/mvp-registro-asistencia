@@ -10,6 +10,8 @@ import {
     isValidName,
     isValidMonth,
     isValidDate,
+    isValidRut,
+    normalizeRut,
 } from "../src/utils/validate.js";
 
 describe("isNonEmptyString", () => {
@@ -155,5 +157,23 @@ describe("isValidName", () => {
 
     it("CP-31: devuelve false cuando el nombre contiene números", () => {
         expect(isValidName("Juan123")).toBe(false);
+    });
+});
+
+describe("RUT chileno", () => {
+    it("CP-32: normaliza un RUT con puntos", () => {
+        expect(normalizeRut("18.234.567-9")).toBe("18234567-9");
+    });
+
+    it("CP-33: acepta un RUT con dígito verificador válido", () => {
+        expect(isValidRut("18.234.567-9")).toBe(true);
+    });
+
+    it("CP-34: rechaza un dígito verificador incorrecto", () => {
+        expect(isValidRut("18.234.567-8")).toBe(false);
+    });
+
+    it("CP-35: rechaza un RUT vacío", () => {
+        expect(isValidRut("")).toBe(false);
     });
 });

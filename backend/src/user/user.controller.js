@@ -17,14 +17,14 @@ const addUser = async (req, res) => {
     }
 
     if (!isNonEmptyString(rut)) {
-      throw { code: "401" };  
+      throw { code: "421" };
     }
 
     if (!isValidRut(rut)) {
       throw { code: "420" };
     }
 
-    const existing = await userModel.findUserByEmail(email.trim());
+    const existing = await userModel.findUserByEmail({ email: email.trim() });
 
     if (existing.rowCount !== 0) throw { code: "409" };
 
@@ -70,9 +70,9 @@ const updateUser = async (req, res) => {
     }
 
     if (!isNonEmptyString(rut)) {
-      throw { code: "401" };  
+      throw { code: "421" };
     }
-    
+
     if (!isValidRut(rut)) {
       throw { code: "420" };
     }
