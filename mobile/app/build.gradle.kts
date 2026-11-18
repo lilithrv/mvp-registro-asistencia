@@ -24,7 +24,7 @@ android {
             buildConfigField(
                 "String",
                 "API_BASE_URL",
-                "\"http://127.0.0.1:3000/api/apiRest/\""
+                "\"https://portal-asistencia.chilecentral.cloudapp.azure.com/api/apiRest/\""
             )
         }
         release {

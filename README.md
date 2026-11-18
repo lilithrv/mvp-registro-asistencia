@@ -19,6 +19,10 @@ Mejorar la organización interna y asegurar el cumplimiento de las normativas la
 - React + Vite
 - Bootstrap 5 + Bootstrap Icons
 
+**Mobile** (app Android "Presente", Etapa 3)
+- Kotlin + Jetpack Compose
+- Retrofit (consumo de la API `/api/apiRest`)
+
 
 ## Requisitos previos
 
@@ -88,6 +92,10 @@ El backend debería quedar corriendo en el puerto configurado (revisa la consola
 3. Ejecuta `npm run dev` y abre la dirección que muestra Vite.
 
 El backend debe definir `FRONTEND_ORIGIN=http://localhost:5173` para aceptar las cookies de sesión durante el desarrollo.
+
+## Mobile (Etapa 3)
+
+Aplicación Android **"Presente"** de solo consulta de asistencia, que consume la API `/api/apiRest`. Las instrucciones de instalación, build y configuración están en su propio archivo: [`mobile/README.md`](mobile/README.md).
 
 ## Endpoints
 
@@ -242,21 +250,21 @@ El backend debe definir `FRONTEND_ORIGIN=http://localhost:5173` para aceptar las
 
 | Método | Ruta | Acceso | Requerimiento |
 |---|---|---|---|
-| GET | `/api/public/empleados` | público / plataformas externas | AP-01 |
+| GET | `/api/apiRest/public/empleados` | público / plataformas externas | AP-01 |
 
 ### Listar empleados (API pública)
 
 #### Filtrar por estado (obligatorio: activo, inactivo o todos)
-`GET /api/public/empleados?estado=activo`
+`GET /api/apiRest/public/empleados?estado=activo`
 
-`GET /api/public/empleados?estado=inactivo`
+`GET /api/apiRest/public/empleados?estado=inactivo`
 
-`GET /api/public/empleados?estado=todos`
+`GET /api/apiRest/public/empleados?estado=todos`
 
 Ejemplo de respuesta:
 
 **Endpoint:**
-`GET /api/public/empleados?estado=activo`
+`GET /api/apiRest/public/empleados?estado=activo`
 
 **Respuesta:**
 
@@ -282,3 +290,93 @@ Ejemplo de respuesta:
     }
 }
 ```
+
+## API Móvil (Etapa 3)
+
+API REST de **solo consulta** que utiliza la app Android "Presente". Todas las rutas se montan bajo el prefijo `/api/apiRest`.
+
+| Método | Ruta | Acceso | Requerimiento |
+|---|---|---|---|
+| POST | `/api/apiRest/login` | público | AP-03 (login móvil) |
+| GET | `/api/apiRest/asistencia` | Bearer | AP-02 (asistencia por RUT y fecha) |
+| GET | `/api/apiRest/empleados` | Bearer (solo admin) | GU-05 (listar usuarios por estado) |
+
+**Autenticación**
+- El login móvil está separado del login web: devuelve el **token JWT en el cuerpo** de la respuesta (no en cookie).
+- Las rutas protegidas requieren la cabecera `Authorization: Bearer <token>`.
+- El token es *stateless* (no hay endpoint de logout): para cerrar sesión la app borra el token guardado. El token caduca según `JWT_EXPIRES_IN` (2h por defecto); al expirar, la app debe volver a iniciar sesión.
+- Precondición: el usuario debe haber cambiado su clave temporal en la aplicación web antes de poder usar la app móvil.
+
+### Login (móvil)
+
+**Endpoint:**
+`POST /api/apiRest/login`
+
+**Body:**
+
+```json
+{
+    "email": "juan.perez@asistencia.cl",
+    "password": "clave123456"
+}
+```
+
+**Respuesta (200):**
+
+```json
+{
+    "ok": true,
+    "mensaje": "Autenticación exitosa",
+    "result": {
+        "token": "<jwt>",
+        "id": 2,
+        "nombre": "Juan Pérez",
+        "rol": "empleado",
+        "rut": "18234567-9"
+    }
+}
+```
+
+Errores posibles: credenciales inválidas, usuario inactivo (`"Usuario inválido"`) o usuario con clave temporal pendiente (`"Debe cambiar su contraseña en el sistema web antes de usar la app"`).
+
+### Consultar asistencia
+
+**Endpoint:**
+`GET /api/apiRest/asistencia?rut=<rut>&fecha=<YYYY-MM-DD>`
+
+Requiere cabecera `Authorization: Bearer <token>`.
+
+- **Administrador:** debe enviar `rut` y `fecha` (puede consultar a cualquier trabajador).
+- **Trabajador:** envía solo `fecha`; el RUT se toma de su token (si manda otro, se ignora).
+- El RUT acepta con o sin puntos (`18.234.567-9` o `18234567-9`); se valida el dígito verificador.
+
+**Respuesta (200) con marcas:**
+
+```json
+{
+    "ok": true,
+    "result": {
+        "rut": "18234567-9",
+        "fecha": "2026-09-04",
+        "nombre": "Juan Pérez",
+        "entrada": "09:29:49",
+        "salida": "18:16:45"
+    }
+}
+```
+
+**Casos especiales:**
+
+| Situación | Respuesta |
+|---|---|
+| Día hábil pasado sin marcas | 200 con `entrada: null` y `salida: null` (inasistencia) |
+| Fecha futura | 400 — `"La fecha consultada aún no ha ocurrido"` |
+| Feriado sin marcas | 400 — `"Día no laboral: <descripción del feriado>"` |
+| Fin de semana sin marcas | 400 — `"Día no laboral (fin de semana)"` |
+
+### Listar empleados por estado (admin)
+
+**Endpoint:**
+`GET /api/apiRest/empleados?estado=activo|inactivo|todos`
+
+Requiere cabecera `Authorization: Bearer <token>` y rol administrador. Devuelve el listado de usuarios filtrado por estado (misma estructura que la API pública). El parámetro `estado` es obligatorio.
